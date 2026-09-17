@@ -7,7 +7,7 @@ int add(int a, int b);   // function declaration
 
 int main()
 {
-    cout << "Hello, CMake!" << endl;
+    cout << "Hello, CMake CI!" << endl;
     cout << "Durga" << endl;
 
     int result = add(10, 20);
