@@ -17,11 +17,17 @@ jobs:
           sudo apt update
           sudo apt install -y cmake g++
 
-      - name: Configure CMake
-        run: cmake -S . -B build
+      - name: Configure Debug
+        run: cmake -S . -B build_debug -DCMAKE_BUILD_TYPE=Debug
 
-      - name: Build project
-        run: cmake --build build
+      - name: Build Debug
+        run: cmake --build build_debug
+
+      - name: Configure Release
+        run: cmake -S . -B build_release -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build Release
+        run: cmake --build build_release
 
   test:
     runs-on: ubuntu-latest
@@ -36,11 +42,11 @@ jobs:
           sudo apt update
           sudo apt install -y cmake g++
 
-      - name: Configure CMake
-        run: cmake -S . -B build
+      - name: Configure Debug
+        run: cmake -S . -B build_debug -DCMAKE_BUILD_TYPE=Debug
 
-      - name: Build project
-        run: cmake --build build
+      - name: Build Debug
+        run: cmake --build build_debug
 
       - name: Run tests
-        run: ctest --test-dir build --output-on-failure
+        run: ctest --test-dir build_debug --output-on-failure
