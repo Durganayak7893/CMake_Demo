@@ -21,3 +21,10 @@ add_executable(MyProject
 target_link_libraries(MyProject
     PRIVATE MathLib
 )
+
+enable_testing()
+
+add_test(
+    NAME MathTest
+    COMMAND MyProject
+)
