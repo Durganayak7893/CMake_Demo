@@ -9,6 +9,8 @@ add_library(MathLib SHARED
     math.cpp
 )
 
+target_compile_definitions(MathLib PRIVATE MATHLIB_EXPORTS)
+
 target_include_directories(MathLib
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
