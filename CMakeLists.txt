@@ -9,10 +9,6 @@ add_library(MathLib SHARED
     math.cpp
 )
 
-set_target_properties(math_lib PROPERTIES 
-    WINDOWS_EXPORT_ALL_SYMBOLS ON
-)
-
 target_include_directories(MathLib
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
