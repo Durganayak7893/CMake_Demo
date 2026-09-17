@@ -2,7 +2,7 @@ build:
   strategy:
     matrix:
       os: [ubuntu-latest, windows-latest, macos-latest]
-      build_type: [Debug, Release] 
+      build_type: [Debug, Release]
 
   runs-on: ${{ matrix.os }}
 
@@ -11,16 +11,16 @@ build:
       uses: actions/checkout@v4
 
     - name: Configure CMake
-      run: cmake -S . -B build
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
     - name: Build
-      run: cmake --build build
+      run: cmake --build build --config ${{ matrix.build_type }}
 
     - name: Run Tests
-      run: ctest --test-dir build -C Debug --output-on-failure
+      run: ctest --test-dir build -C ${{ matrix.build_type }} --output-on-failure
 
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
-        name: build-${{ matrix.os }}
+        name: build-${{ matrix.os }}-${{ matrix.build_type }}
         path: build/
