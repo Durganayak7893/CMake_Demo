@@ -1,8 +1,16 @@
-build:
-  strategy:
-    matrix:
-      os: [ubuntu-latest, windows-latest, macos-latest]
-      build_type: [Debug, Release]
+name: C++ CMake CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        build_type: [Debug, Release]
 
   runs-on: ${{ matrix.os }}
 
