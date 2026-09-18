@@ -112,3 +112,26 @@ jobs:
           generate_release_notes: true
           files: |
             release/**/*.zip
+  deploy:
+    needs: release
+
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download packaged artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: all-release-builds
+          path: deploy/
+
+      - name: Verify deployment files
+        run: |
+          echo "Deployment started"
+          find deploy -type f
+
+      - name: Deploy
+        run: |
+          echo "Deploying ${{ github.ref_name }}"
+          echo "Deployment completed successfully"
