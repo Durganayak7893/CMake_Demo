@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - "v*"
 
 jobs:
   build:
@@ -46,7 +48,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Download build artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: build-${{ matrix.os }}-${{ matrix.build_type }}
           path: build/
@@ -81,47 +83,32 @@ jobs:
           name: all-release-builds
           path: artifacts/
           retention-days: 7
-
   release:
     needs: package
 
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    if: startsWith(github.ref, 'refs/tags/v')
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     steps:
-      - name: Download Release artifact
-        uses: actions/download-artifact@v6
+      - name: Download packaged artifacts
+        uses: actions/download-artifact@v7
         with:
-          name: build-${{ matrix.os }}-Release
+          name: all-release-builds
           path: release/
 
-      - name: Prepare Release Package
-        shell: bash
+      - name: List release files
         run: |
-          mkdir package
+          find release -type f
 
-          if [ "${{ runner.os }}" = "Windows" ]; then
-            cp release/Release/MyProject.exe package/
-            cp release/Release/MathLib.dll package/
-          elif [ "${{ runner.os }}" = "Linux" ]; then
-            cp release/MyProject package/
-            cp release/libMathLib.so package/
-          elif [ "${{ runner.os }}" = "macOS" ]; then
-            cp release/MyProject package/
-            cp release/libMathLib.dylib package/
-          fi
-
-      - name: Create ZIP
-        shell: bash
-        run: |
-          7z a MyProject-${{ runner.os }}-Release.zip ./package/*
-
-      - name: Upload Release Package
-        uses: actions/upload-artifact@v6
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: MyProject-${{ runner.os }}-Release
-          path: MyProject-${{ runner.os }}-Release.zip
-          retention-days: 7
+          tag_name: ${{ github.ref_name }}
+          name: CMake Demo ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            release/**/*.zip
