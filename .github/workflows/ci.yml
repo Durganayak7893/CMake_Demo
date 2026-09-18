@@ -57,3 +57,19 @@ jobs:
 
       - name: Run Tests
         run: ctest --test-dir build -C ${{ matrix.build_type }} --output-on-failure
+  package:
+    needs: test
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Release artifacts
+        uses: actions/download-artifact@v7
+        with:
+          pattern: build-*-Release
+          path: artifacts/
+          merge-multiple: false
+
+      - name: List artifacts
+        run: |
+          find artifacts -type f
