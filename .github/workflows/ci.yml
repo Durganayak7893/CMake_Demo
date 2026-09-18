@@ -4,8 +4,10 @@ on:
   push:
     branches:
       - main
-    tags:
-      - "v*"
+
+env:
+  APP_NAME: CMakeDemo
+  PROJECT_VERSION: 1.0.0
 
 jobs:
   build:
@@ -20,11 +22,21 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v5
 
+      - name: Test GitHub Secret
+        env:
+          MY_SECRET: ${{ secrets.MY_SECRET }}
+        run: |
+          echo "Secret is configured"
+          echo "Secret value: $MY_SECRET"
+
       - name: Configure CMake
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: Build
         run: cmake --build build --config ${{ matrix.build_type }}
+
+      - name: Run Tests
+        run: ctest --test-dir build -C ${{ matrix.build_type }} --output-on-failure
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v6
