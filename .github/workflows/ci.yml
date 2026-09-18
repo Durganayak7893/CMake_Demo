@@ -24,12 +24,32 @@ jobs:
       - name: Build
         run: cmake --build build --config ${{ matrix.build_type }}
 
-      - name: Run Tests
-        run: ctest --test-dir build -C ${{ matrix.build_type }} --output-on-failure
-
       - name: Upload build artifact
         uses: actions/upload-artifact@v6
         with:
           name: build-${{ matrix.os }}-${{ matrix.build_type }}
           path: build/
           retention-days: 7
+
+  test:
+    needs: build
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        build_type: [Debug, Release]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v5
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: build-${{ matrix.os }}-${{ matrix.build_type }}
+          path: build/
+
+      - name: Run Tests
+        run: ctest --test-dir build -C ${{ matrix.build_type }} --output-on-failure
